@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { getMovies, deleteMovie } from "../services/fakeMovieService";
-import Favorite from "./favorite";
+import Like from "./like";
 
 class Movies extends Component {
   constructor(props) {
@@ -32,12 +32,12 @@ class Movies extends Component {
       : "There are no movies in the database";
   };
 
-  handleFavorite = movie => {
-    const { movies } = this.state;
-    const updatedMovies = movies.map(m =>
-      m._id === movie._id ? (m.favorite = !movie.favorite) : null
-    );
-    this.setState({ moveies: updatedMovies });
+  handleLike = movie => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index].liked = !movies[index].liked;
+    // movies.map(m => (m._id === movie._id ? (m.liked = !movie.liked) : null));
+    this.setState({ moveies: movies });
   };
 
   render() {
@@ -54,6 +54,7 @@ class Movies extends Component {
                 <th scope="col">Stock</th>
                 <th scope="col">Rate</th>
                 <th scope="col"></th>
+                <th scope="col"></th>
               </tr>
             </thead>
             <tbody>
@@ -64,9 +65,9 @@ class Movies extends Component {
                   <td>{movie.numberInStock}</td>
                   <td>{movie.dailyRentalRate}</td>
                   <td>
-                    <Favorite
-                      active={movie.favorite || false}
-                      onFavorite={_e => this.handleFavorite(movie)}
+                    <Like
+                      active={movie.liked || false}
+                      onLike={_e => this.handleLike(movie)}
                     />
                   </td>
                   <td>

@@ -67,8 +67,12 @@ const movies = [
   }
 ];
 
-export function getMovies() {
+export function getAllMovies() {
   return movies;
+}
+
+export function getMovies(from, to) {
+  return movies.slice(from, to);
 }
 
 export function getMovie(id) {

@@ -67,13 +67,13 @@ const movies = [
   }
 ];
 
-export function getAllMovies() {
+export function getMovies() {
   return movies;
 }
 
-export function getMovies(from, to) {
-  return movies.slice(from, to);
-}
+// export function getMovies(from, to) {
+//   return movies.slice(from, to);
+// }
 
 export function getMovie(id) {
   return movies.find(m => m._id === id);

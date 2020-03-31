@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const Like = props => {
   return (
@@ -8,6 +9,11 @@ const Like = props => {
       onClick={props.onLike}
     ></i>
   );
+};
+
+Like.propTypes = {
+  active: PropTypes.bool.isRequired,
+  onLike: PropTypes.func.isRequired
 };
 
 export default Like;

@@ -1,74 +1,41 @@
-import React, { Component } from "react";
+import React from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-class Pagination extends Component {
-  createPagination = () => {
-    const pagination = [];
-    const pageItems = this.createPageItems();
-    pagination.push(pageItems);
+// stateless Component
+// we will install lodash
 
-    if (this.props.current > 1) {
-      const previous = this.createPrevious();
-      pagination.unshift(previous);
-    }
+const Pagination = props => {
+  const { itemsCount, pageSize, currentPage, onPageChange } = props;
+  const pagesCount = Math.ceil(itemsCount / pageSize); // rounds 3,8 => 3
+  if (pagesCount === 1) return null;
+  // [1...pagesCount].map()
+  const pages = _.range(1, pagesCount + 1);
 
-    if (this.props.current !== this.props.pages) {
-      const next = this.createNext();
-      pagination.push(next);
-    }
-    // this.setState({ pagination });
-    return pagination;
-  };
-
-  createPageItems = () => {
-    const { pages, current } = this.props;
-    const items = [];
-    for (let i = 0; i < pages; i++) {
-      items.push(
-        <li
-          key={i.toString()}
-          className={`page-item ${current === i + 1 ? "active" : ""}`}
-          onClick={_e => this.props.onPaginate(i + 1)}
-        >
-          <span className="page-link">{i + 1}</span>
-        </li>
-      );
-    }
-    return items;
-  };
-
-  createPrevious = () => {
-    return (
-      <li
-        key={"prev"}
-        className="page-item"
-        onClick={_e => this.props.onPaginate(this.props.current - 1)}
-      >
-        <span className="page-link">Previous</span>
-      </li>
-    );
-  };
-
-  createNext = () => {
-    return (
-      <li
-        key={"next"}
-        className="page-item"
-        onClick={_e => this.props.onPaginate(this.props.current + 1)}
-      >
-        <span className="page-link">Next</span>
-      </li>
-    );
-  };
-
-  render() {
-    return (
-      <nav aria-label="Page navigation example">
-        <ul className="pagination" style={{ cursor: "pointer" }}>
-          {this.createPagination()}
-        </ul>
-      </nav>
-    );
-  }
-}
+  return (
+    <nav aria-label="Page navigation example">
+      <ul className="pagination">
+        {pages.map(page => (
+          <li
+            key={page}
+            className={page === currentPage ? "page-item active" : "page-item"}
+            style={{ cursor: "pointer" }}
+          >
+            <button className="page-link" onClick={_e => onPageChange(page)}>
+              {page}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+};
+/* https://es.reactjs.org/docs/typechecking-with-proptypes.html */
+Pagination.propTypes = {
+  itemsCount: PropTypes.number.isRequired,
+  pageSize: PropTypes.number.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired
+};
 
 export default Pagination;

@@ -34,9 +34,8 @@ class Movies extends Component {
   };
 
   handleDelete = id => {
-    // const updatedMovies = this.state.movies.filter(movie => movie._id !== id);
-    const updatedMovies = deleteMovie(id);
-    this.setState({ moveies: updatedMovies });
+    deleteMovie(id);
+    this.handleGenreChange(this.state.currentGenre);
   };
 
   textInfo = () => {

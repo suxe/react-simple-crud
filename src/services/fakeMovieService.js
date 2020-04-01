@@ -41,7 +41,7 @@ const movies = [
     _id: "5b21ca3eeb7f6fbccd47181b",
     title: "Wedding Crashers",
     genre: { _id: "5b21ca3eeb7f6fbccd471814", name: "Comedy" },
-    numberInStock: 7,
+    numberInStock: 2,
     dailyRentalRate: 3.5
   },
   {
@@ -63,7 +63,42 @@ const movies = [
     title: "The Avengers",
     genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
     numberInStock: 7,
-    dailyRentalRate: 3.5
+    dailyRentalRate: 6.8
+  },
+  {
+    _id: "5b21ca3eeb7f6ftccd471111",
+    title: "Star Wars III",
+    genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
+    numberInStock: 6,
+    dailyRentalRate: 9.9
+  },
+  {
+    _id: "5b21ca3eeb7f6fbccd471222",
+    title: "Titanic",
+    genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
+    numberInStock: 8,
+    dailyRentalRate: 2.1
+  },
+  {
+    _id: "5b21ca3eeb7f6fbccd471333",
+    title: "Pink Panther",
+    genre: { _id: "5b21ca3eeb7f6fbccd471818", name: "Action" },
+    numberInStock: 2,
+    dailyRentalRate: 5.5
+  },
+  {
+    _id: "5b21ca3eeb7f6fbccd471444",
+    title: "Torrente",
+    genre: { _id: "5b21ca3eeb7f6fbccd471820", name: "Thriller" },
+    numberInStock: 2,
+    dailyRentalRate: 8.5
+  },
+  {
+    _id: "5b21ca3eeb7f6fbccd471555",
+    title: "Dragon Ball Z",
+    genre: { _id: "5b21ca3eeb7f6fbccd471814", name: "Comedy" },
+    numberInStock: 22,
+    dailyRentalRate: 5.5
   }
 ];
 

@@ -69,7 +69,8 @@ class Movies extends Component {
       this.setState({ movies });
     }
     this.setState({
-      currentGenre: genreName
+      currentGenre: genreName,
+      currentPage: 1
     });
   };
 

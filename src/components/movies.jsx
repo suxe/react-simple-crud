@@ -4,7 +4,7 @@ import { getGenres } from "../services/fakeGenreService";
 import Like from "./like";
 import Pagination from "./pagination";
 import { paginate } from "../utils/paginate";
-import Genres from "./genres";
+import ListGroup from "./listGroup";
 
 class Movies extends Component {
   constructor(props) {
@@ -14,7 +14,7 @@ class Movies extends Component {
       currentPage: 1,
       movies: [],
       genres: [],
-      currentGenre: null
+      selectedGenre: null
     };
   }
 
@@ -35,7 +35,7 @@ class Movies extends Component {
 
   handleDelete = id => {
     deleteMovie(id);
-    this.handleGenreChange(this.state.currentGenre);
+    this.handleGenreSelect(this.state.selectedGenre);
   };
 
   textInfo = () => {
@@ -57,7 +57,7 @@ class Movies extends Component {
     this.setState({ currentPage: page });
   };
 
-  handleGenreChange = genreName => {
+  handleGenreSelect = genreName => {
     this.getMovies();
     let movies = getMovies();
 
@@ -68,7 +68,7 @@ class Movies extends Component {
       this.setState({ movies });
     }
     this.setState({
-      currentGenre: genreName,
+      selectedGenre: genreName,
       currentPage: 1
     });
   };
@@ -80,7 +80,7 @@ class Movies extends Component {
       currentPage,
       movies: allMovies,
       genres: allGenres,
-      currentGenre
+      selectedGenre
     } = this.state;
 
     const movies = paginate(allMovies, currentPage, pageSize);
@@ -89,10 +89,10 @@ class Movies extends Component {
       <React.Fragment>
         <div className="row">
           <div className="col-md-2">
-            <Genres
-              genres={allGenres}
-              currentGenre={currentGenre}
-              onGenreCHange={this.handleGenreChange}
+            <ListGroup
+              items={allGenres}
+              selectedItem={selectedGenre}
+              onItemSelect={this.handleGenreSelect}
             />
           </div>
           <div className="col">

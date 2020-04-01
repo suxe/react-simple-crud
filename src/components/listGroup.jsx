@@ -13,20 +13,13 @@ const ListGroup = props => {
 
   return (
     <div className="list-group">
-      <button
-        key={null}
-        className={selectedItem === null ? classes + " active" : classes}
-        onClick={_e => onItemSelect(null)}
-      >
-        All
-      </button>
       {items.map(item => (
         <button
-          key={item[valueProperty]}
+          key={item[valueProperty] || "all"}
           className={
-            selectedItem === item[textProperty] ? classes + " active" : classes
+            selectedItem === item[valueProperty] ? classes + " active" : classes
           }
-          onClick={_e => onItemSelect(item[textProperty])}
+          onClick={_e => onItemSelect(item[valueProperty])}
         >
           {item[textProperty]}
         </button>

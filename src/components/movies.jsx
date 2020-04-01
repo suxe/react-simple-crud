@@ -29,7 +29,8 @@ class Movies extends Component {
   };
 
   getGenres = () => {
-    const genres = getGenres();
+    // Add all genres item
+    const genres = [{ _id: null, name: "All Genres" }, ...getGenres()];
     this.setState({ genres });
   };
 
@@ -38,8 +39,13 @@ class Movies extends Component {
     this.handleGenreSelect(this.state.selectedGenre);
   };
 
-  textInfo = () => {
-    const { movies } = this.state;
+  textInfo = movies => {
+    const { selectedGenre } = this.state;
+
+    if (selectedGenre !== null) {
+      movies = getMovies().filter(m => m.genre._id === selectedGenre);
+    }
+
     return movies.length > 0
       ? `Showing ${movies.length} movies in the database`
       : "There are no movies in the database";
@@ -57,24 +63,14 @@ class Movies extends Component {
     this.setState({ currentPage: page });
   };
 
-  handleGenreSelect = genreName => {
-    this.getMovies();
-    let movies = getMovies();
-
-    if (genreName !== null) {
-      movies = movies.filter(movie => {
-        return genreName === movie.genre.name;
-      });
-      this.setState({ movies });
-    }
+  handleGenreSelect = genreId => {
     this.setState({
-      selectedGenre: genreName,
+      selectedGenre: genreId,
       currentPage: 1
     });
   };
 
   render() {
-    const { length: count } = this.state.movies;
     const {
       pageSize,
       currentPage,
@@ -83,7 +79,11 @@ class Movies extends Component {
       selectedGenre
     } = this.state;
 
-    const movies = paginate(allMovies, currentPage, pageSize);
+    const filtered = selectedGenre
+      ? allMovies.filter(m => m.genre._id === selectedGenre)
+      : allMovies;
+
+    const movies = paginate(filtered, currentPage, pageSize);
 
     return (
       <React.Fragment>
@@ -96,8 +96,8 @@ class Movies extends Component {
             />
           </div>
           <div className="col">
-            <h5 className="m-2">{this.textInfo()}</h5>
-            {count > 0 && (
+            <h5 className="m-2">{this.textInfo(allMovies)}</h5>
+            {filtered.length > 0 && (
               <React.Fragment>
                 <table className="table table-hover">
                   <thead>
@@ -136,7 +136,7 @@ class Movies extends Component {
                   </tbody>
                 </table>
                 <Pagination
-                  itemsCount={count}
+                  itemsCount={filtered.length}
                   pageSize={pageSize}
                   currentPage={currentPage}
                   onPageChange={this.handlePageChange}

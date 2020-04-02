@@ -2,7 +2,7 @@ import React, { Component } from "react"
 import { getMovies, deleteMovie } from "../services/fakeMovieService"
 import { getGenres } from "../services/fakeGenreService"
 import Pagination from "./pagination"
-import { paginate } from "../utils/paginate"
+import { paginate, orderTable } from "../utils/paginate"
 import ListGroup from "./listGroup"
 import MoviesTable from "./moviesTable"
 
@@ -15,12 +15,7 @@ class Movies extends Component {
       movies: [],
       genres: [],
       selectedGenre: null,
-      oreder: {
-        title_order: "",
-        genre_order: "",
-        stock_order: "",
-        rate_order: ""
-      }
+      tableOrder: ["title", "desc"]
     }
   }
 
@@ -77,7 +72,24 @@ class Movies extends Component {
   }
 
   handleSort = (path, _e) => {
-    console.log("... handleSort")
+    console.log(path)
+    const { tableOrder } = this.state
+    tableOrder[0] = path
+    switch (tableOrder[1]) {
+      case "":
+        tableOrder[1] = "asc"
+        break
+      case "asc":
+        tableOrder[1] = "desc"
+        break
+      case "desc":
+        tableOrder[1] = ""
+        break
+      default:
+        tableOrder[1] = ""
+    }
+
+    this.setState({ tableOrder })
   }
 
   render() {
@@ -86,7 +98,8 @@ class Movies extends Component {
       currentPage,
       movies: allMovies,
       genres: allGenres,
-      selectedGenre
+      selectedGenre,
+      tableOrder
     } = this.state
 
     const filtered = selectedGenre
@@ -94,6 +107,7 @@ class Movies extends Component {
       : allMovies
 
     const movies = paginate(filtered, currentPage, pageSize)
+    const orderedMovies = orderTable(movies, tableOrder[0], tableOrder[1])
 
     return (
       <React.Fragment>
@@ -110,10 +124,11 @@ class Movies extends Component {
             {filtered.length > 0 && (
               <React.Fragment>
                 <MoviesTable
-                  movies={movies}
+                  movies={orderedMovies}
                   onLike={this.handleLike}
                   onDelete={this.handleDelete}
                   onSort={this.handleSort}
+                  sortBy={tableOrder}
                 />
                 <Pagination
                   itemsCount={filtered.length}

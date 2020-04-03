@@ -1,18 +1,17 @@
-import React, { Component } from "react"
+import React from "react"
 import TableHeader from "./tableHeader"
 import TableBody from "./tableBody"
 import PropTypes from "prop-types"
 
-class Table extends Component {
-  render() {
-    const { data, columns, sortBy, onSort } = this.props
-    return (
-      <table className="table table-hover">
-        <TableHeader columns={columns} sortBy={sortBy} onSort={onSort} />
-        <TableBody data={data} columns={columns} />
-      </table>
-    )
-  }
+// const { data, columns, sortBy, onSort } = props | passing destructured object as args to the function
+
+const Table = ({ data, columns, sortBy, onSort }) => {
+  return (
+    <table className="table table-hover">
+      <TableHeader columns={columns} sortBy={sortBy} onSort={onSort} />
+      <TableBody data={data} columns={columns} />
+    </table>
+  )
 }
 
 Table.propTypes = {

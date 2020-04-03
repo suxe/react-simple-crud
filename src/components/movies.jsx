@@ -75,12 +75,11 @@ class Movies extends Component {
     this.setState({ sortColumn })
   }
 
-  render() {
+  getPagedData = () => {
     const {
       pageSize,
       currentPage,
       movies: allMovies,
-      genres: allGenres,
       selectedGenre,
       sortColumn
     } = this.state
@@ -97,6 +96,25 @@ class Movies extends Component {
 
     const movies = paginate(orderedMovies, currentPage, pageSize)
 
+    return {
+      totalCount: filtered.length,
+      data: movies
+    }
+  }
+
+  render() {
+    const {
+      pageSize,
+      currentPage,
+      movies: allMovies,
+      genres: allGenres,
+      selectedGenre,
+      sortColumn
+    } = this.state
+
+    // Filtering, sorting, pagination
+    const { totalCount, data: movies } = this.getPagedData()
+
     return (
       <React.Fragment>
         <div className="row">
@@ -109,7 +127,7 @@ class Movies extends Component {
           </div>
           <div className="col">
             <h5 className="m-2">{this.textInfo(allMovies)}</h5>
-            {filtered.length > 0 && (
+            {totalCount > 0 && (
               <React.Fragment>
                 <MoviesTable
                   movies={movies}
@@ -119,7 +137,7 @@ class Movies extends Component {
                   sortBy={sortColumn}
                 />
                 <Pagination
-                  itemsCount={filtered.length}
+                  itemsCount={totalCount}
                   pageSize={pageSize}
                   currentPage={currentPage}
                   onPageChange={this.handlePageChange}

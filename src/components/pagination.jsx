@@ -1,16 +1,13 @@
-import React from "react";
-import _ from "lodash";
-import PropTypes from "prop-types";
-
-// stateless Component
-// we will install lodash
+import React from "react"
+import _ from "lodash"
+import PropTypes from "prop-types"
 
 const Pagination = props => {
-  const { itemsCount, pageSize, currentPage, onPageChange } = props;
-  const pagesCount = Math.ceil(itemsCount / pageSize); // rounds 3,8 => 3
-  if (pagesCount === 1) return null;
+  const { itemsCount, pageSize, currentPage, onPageChange } = props
+  const pagesCount = Math.ceil(itemsCount / pageSize) // rounds 3,8 => 3
+  if (pagesCount === 1) return null
   // [1...pagesCount].map()
-  const pages = _.range(1, pagesCount + 1);
+  const pages = _.range(1, pagesCount + 1)
 
   return (
     <nav aria-label="Page navigation example">
@@ -28,14 +25,14 @@ const Pagination = props => {
         ))}
       </ul>
     </nav>
-  );
-};
+  )
+}
 /* https://es.reactjs.org/docs/typechecking-with-proptypes.html */
 Pagination.propTypes = {
   itemsCount: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   currentPage: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired
-};
+}
 
-export default Pagination;
+export default Pagination

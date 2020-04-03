@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import TableHeader from "./tableHeader"
-import TableBody from "./tableBody"
+import Table from "./table"
+import Like from "./like"
 import PropTypes from "prop-types"
 
 class MoviesTable extends Component {
@@ -9,8 +9,27 @@ class MoviesTable extends Component {
     { path: "genre.name", label: "Genre" },
     { path: "numberInStock", label: "Stock" },
     { path: "dailyRentalRate", label: "Rate" },
-    { key: "like" },
-    { key: "delete" }
+    {
+      key: "like",
+      content: movie => (
+        <Like
+          active={movie.liked || false}
+          onLike={_e => this.props.onLike(movie)}
+        />
+      )
+    },
+    {
+      key: "delete",
+      content: movie => (
+        <button
+          className="btn btn-danger btn-sm"
+          style={{ cursor: "pointer" }}
+          onClick={_e => this.props.onDelete(movie._id)}
+        >
+          Delete
+        </button>
+      )
+    }
   ]
 
   raiseSort = path => {
@@ -23,17 +42,15 @@ class MoviesTable extends Component {
   }
 
   render() {
-    const { movies, onLike, onDelete, sortBy } = this.props
+    const { movies, sortBy } = this.props
 
     return (
-      <table className="table table-hover">
-        <TableHeader
-          columns={this.columns}
-          sortBy={sortBy}
-          onSort={this.raiseSort}
-        />
-        <TableBody items={movies} onLike={onLike} onDelete={onDelete} />
-      </table>
+      <Table
+        data={movies}
+        columns={this.columns}
+        sortBy={sortBy}
+        onSort={this.raiseSort}
+      />
     )
   }
 }

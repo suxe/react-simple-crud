@@ -1,39 +1,37 @@
-import React from "react"
-import Like from "./like"
+import React, { Component } from "react"
 import PropTypes from "prop-types"
+import _ from "lodash"
 
-const TableBody = props => {
-  const { items, onLike, onDelete } = props
-  return (
-    <tbody>
-      {items.map(item => (
-        <tr key={item._id}>
-          <th scope="row">{item.title}</th>
-          <td>{item.genre.name}</td>
-          <td>{item.numberInStock}</td>
-          <td>{item.dailyRentalRate}</td>
-          <td>
-            <Like active={item.liked || false} onLike={_e => onLike(item)} />
-          </td>
-          <td>
-            <button
-              className="btn btn-danger btn-sm"
-              style={{ cursor: "pointer" }}
-              onClick={_e => onDelete(item._id)}
-            >
-              Delete
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  )
+class TableBody extends Component {
+  renderCell = (item, column) => {
+    if (column.content) return column.content(item)
+
+    return _.get(item, column.path)
+  }
+
+  createKey = (item, column) => item._id + (column.path || column.key)
+
+  render() {
+    const { data, columns } = this.props
+    return (
+      <tbody>
+        {data.map(item => (
+          <tr key={item._id}>
+            {columns.map(column => (
+              <td key={this.createKey(item, column)}>
+                {this.renderCell(item, column)}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    )
+  }
 }
 
 TableBody.propTypes = {
-  items: PropTypes.array.isRequired,
-  onLike: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  data: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired
 }
 
 export default TableBody

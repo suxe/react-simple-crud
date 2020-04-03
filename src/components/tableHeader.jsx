@@ -2,7 +2,7 @@ import React from "react"
 import PropTypes from "prop-types"
 
 const TableHeader = props => {
-  const updateSymbol = column => {
+  const renderSortIcon = column => {
     let symbol = ""
     if (column === props.sortBy.path) {
       symbol =
@@ -24,7 +24,7 @@ const TableHeader = props => {
             style={{ cursor: "pointer" }}
             onClick={_e => props.onSort(col.path, _e)}
           >
-            {updateSymbol(col.path)}
+            {renderSortIcon(col.path)}
             {col.label}
           </th>
         ))}

@@ -1,100 +1,41 @@
-import React from "react"
-import Like from "./like"
-import { PropTypes } from "prop-types"
+import React, { Component } from "react"
+import TableHeader from "./tableHeader"
+import TableBody from "./tableBody"
+import PropTypes from "prop-types"
 
-const MoviesTable = props => {
-  // updateSortDir = column => {
-  //   const { sortDir } = this.state
+class MoviesTable extends Component {
+  columns = [
+    { path: "title", label: "Title" },
+    { path: "genre.name", label: "Genre" },
+    { path: "numberInStock", label: "Stock" },
+    { path: "dailyRentalRate", label: "Rate" },
+    { key: "like" },
+    { key: "delete" }
+  ]
 
-  //   switch (sortDir[column]) {
-  //     case "":
-  //       sortDir[column] = "asc"
-  //       break
-  //     case "asc":
-  //       sortDir[column] = "desc"
-  //       break
-  //     case "desc":
-  //       sortDir[column] = ""
-  //       break
-  //     default:
-  //       sortDir[column] = ""
-  //   }
-
-  //   this.setState({ sortDir })
-  // }
-
-  // <span>&#8593;</span>
-  // <span>&#8595;</span>
-
-  const { movies, onLike, onDelete, onSort, sortBy } = props
-
-  const updateSortSymbol = column => {
-    let symbol = ""
-    if (column === sortBy[0]) {
-      switch (sortBy[1]) {
-        case "asc":
-          symbol = <span>&#8593;</span>
-          break
-        case "desc":
-          symbol = <span>&#8595;</span>
-          break
-        default:
-          symbol = ""
-      }
-    }
-    return symbol
+  raiseSort = path => {
+    const { sortBy } = this.props
+    let sortColumn = {}
+    sortColumn.path = path
+    sortColumn.order = sortBy.order === "asc" ? "desc" : "asc"
+    // this raises the method to his parent component
+    this.props.onSort(sortColumn)
   }
 
-  return (
-    <table className="table table-hover">
-      <thead>
-        <tr>
-          <th onClick={_e => onSort("title", _e)}>
-            {updateSortSymbol("title")}
-            Title
-          </th>
-          <th onClick={_e => onSort("genre.name", _e)}>
-            {updateSortSymbol("genre.name")}
-            Genre
-          </th>
-          <th onClick={_e => onSort("numberInStock", _e)}>
-            {updateSortSymbol("numberInStock")}
-            Stock
-          </th>
-          <th onClick={_e => onSort("dailyRentalRate", _e)}>
-            {updateSortSymbol("dailyRentalRate")}
-            Rate
-          </th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {movies.map(movie => (
-          <tr key={movie._id}>
-            <th scope="row">{movie.title}</th>
-            <td>{movie.genre.name}</td>
-            <td>{movie.numberInStock}</td>
-            <td>{movie.dailyRentalRate}</td>
-            <td>
-              <Like
-                active={movie.liked || false}
-                onLike={_e => onLike(movie)}
-              />
-            </td>
-            <td>
-              <button
-                className="btn btn-danger btn-sm"
-                onClick={_e => onDelete(movie._id)}
-              >
-                Delete
-              </button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
+  render() {
+    const { movies, onLike, onDelete, sortBy } = this.props
+
+    return (
+      <table className="table table-hover">
+        <TableHeader
+          columns={this.columns}
+          sortBy={sortBy}
+          onSort={this.raiseSort}
+        />
+        <TableBody items={movies} onLike={onLike} onDelete={onDelete} />
+      </table>
+    )
+  }
 }
 
 MoviesTable.propTypes = {
@@ -102,7 +43,7 @@ MoviesTable.propTypes = {
   onLike: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onSort: PropTypes.func.isRequired,
-  sortBy: PropTypes.array.isRequired
+  sortBy: PropTypes.object.isRequired
 }
 
 export default MoviesTable

@@ -8,6 +8,7 @@ import MovieForm from "./components/movieForm"
 import Customers from "./components/customers"
 import Rentals from "./components/rentals"
 import NotFound from "./components/notFound"
+import LoginForm from "./components/loginform"
 
 function App(props) {
   return (
@@ -19,6 +20,9 @@ function App(props) {
             path="/movies/:id"
             component={(props) => <Form {...props} />}
           /> */}
+          <Route path="/login">
+            <LoginForm />
+          </Route>
           <Route path="/movies/:id">
             <MovieForm />
           </Route>

@@ -15,9 +15,9 @@ class TableBody extends Component {
     const { data, columns } = this.props
     return (
       <tbody>
-        {data.map(item => (
+        {data.map((item) => (
           <tr key={item._id}>
-            {columns.map(column => (
+            {columns.map((column) => (
               <td key={this.createKey(item, column)}>
                 {this.renderCell(item, column)}
               </td>
@@ -31,7 +31,7 @@ class TableBody extends Component {
 
 TableBody.propTypes = {
   data: PropTypes.array.isRequired,
-  columns: PropTypes.array.isRequired
+  columns: PropTypes.array.isRequired,
 }
 
 export default TableBody

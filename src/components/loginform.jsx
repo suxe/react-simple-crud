@@ -11,13 +11,17 @@ class LoginForm extends Component {
     const account = { ...this.state.account }
     let errors = {}
 
-    if (account.username === "") errors.username = "The username is required"
+    if (account.username.trim() === "")
+      errors.username = "The username is required"
     if (account.username.length < 3)
       errors.username = "The username must contain at least 3 characters"
 
-    if (account.password === "") errors.password = "The password is required"
-    if (account.password === "")
+    if (account.password.trim() === "")
+      errors.password = "The password is required"
+    if (account.password.length < 3)
       errors.password = "The password must contain at least 3 characters"
+
+    // return Object.keys(errors).length === 0 ? null : errors
 
     return errors
   }
@@ -28,15 +32,38 @@ class LoginForm extends Component {
     const errors = this.validate()
     this.setState({ errors })
 
-    if (errors) return
+    if (Object.keys(errors).length > 0) return
 
     console.log("submitted")
   }
 
+  validateProperty = ({ name, value }) => {
+    let error = ""
+
+    if (name === "password") {
+      if (value.trim() === "") error = "The Password is required"
+      if (value.length < 3)
+        error = "The Password must contain at least 3 characters"
+    }
+
+    if (name === "username") {
+      if (value.trim() === "") error = "The Name is required"
+      if (value.length < 3)
+        error = "The Name must contain at least 3 characters"
+    }
+
+    return error
+  }
+
   handleInputChange = ({ currentTarget: input }) => {
+    const errors = { ...this.state.errors }
+    const error = this.validateProperty(input)
+    errors[input.name] = error
+
     const account = { ...this.state.account }
     account[input.name] = input.value
-    this.setState({ account })
+
+    this.setState({ account, errors })
   }
 
   render() {
@@ -50,7 +77,7 @@ class LoginForm extends Component {
             value={account.username}
             label={"Name"}
             type={"text"}
-            errors={errors.username}
+            error={errors.username}
             onChange={this.handleInputChange}
           />
           <Input
@@ -58,7 +85,7 @@ class LoginForm extends Component {
             value={account.password}
             label={"Password"}
             type={"password"}
-            errors={errors.password}
+            error={errors.password}
             onChange={this.handleInputChange}
           />
           <button className="btn btn-primary">Login</button>

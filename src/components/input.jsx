@@ -1,16 +1,37 @@
 import React from "react"
 import { PropTypes } from "prop-types"
 
-const Input = ({ name, value, label, type, error, onChange }) => {
+// const Input = ({ name, value, label, type, error, onChange }) => {
+//   return (
+//     <div className="form-group">
+//       <label htmlFor={name}>{label}</label>
+//       <input
+//         onChange={onChange}
+//         name={name}
+//         value={value}
+//         type={type}
+//         id={name}
+//         className={`form-control ${error ? "is-invalid" : ""}`}
+//       />
+//       {error && (
+//         <small className="form-text text-muted text-danger">{error}</small>
+//       )}
+//     </div>
+//   )
+// }
+
+/*
+ * We have extracted the attributes with the same key=value as ...rest.
+ * Compare the commented code with the new one, is nicer
+ */
+const Input = ({ name, label, error, ...rest }) => {
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
       <input
-        onChange={onChange}
+        {...rest}
         name={name}
-        value={value}
         id={name}
-        type={type}
         className={`form-control ${error ? "is-invalid" : ""}`}
       />
       {error && (

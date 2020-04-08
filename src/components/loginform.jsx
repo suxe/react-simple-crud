@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import Joi from "@hapi/joi"
 import Input from "./input"
 
 class LoginForm extends Component {
@@ -7,21 +8,18 @@ class LoginForm extends Component {
     errors: {},
   }
 
+  schema = Joi.object({
+    username: Joi.string().min(3).required().label("User name"),
+    password: Joi.string().min(3).required().label("Password"),
+  })
+
   validate = () => {
-    const account = { ...this.state.account }
     let errors = {}
+    const options = { abortEarly: false }
+    const { error } = this.schema.validate(this.state.account, options)
 
-    if (account.username.trim() === "")
-      errors.username = "The username is required"
-    if (account.username.length < 3)
-      errors.username = "The username must contain at least 3 characters"
-
-    if (account.password.trim() === "")
-      errors.password = "The password is required"
-    if (account.password.length < 3)
-      errors.password = "The password must contain at least 3 characters"
-
-    // return Object.keys(errors).length === 0 ? null : errors
+    if (error && error.details.length > 0)
+      error.details.map((err) => (errors[err.path[0]] = err.message))
 
     return errors
   }
@@ -38,21 +36,18 @@ class LoginForm extends Component {
   }
 
   validateProperty = ({ name, value }) => {
-    let error = ""
+    let errorMessage = ""
+    let label = name === "username" ? "User name" : "Password"
 
-    if (name === "password") {
-      if (value.trim() === "") error = "The Password is required"
-      if (value.length < 3)
-        error = "The Password must contain at least 3 characters"
-    }
+    const { error } = Joi.string()
+      .min(3)
+      .required()
+      .label(label)
+      .validate(value)
 
-    if (name === "username") {
-      if (value.trim() === "") error = "The Name is required"
-      if (value.length < 3)
-        error = "The Name must contain at least 3 characters"
-    }
+    if (error) errorMessage = error.message
 
-    return error
+    return errorMessage
   }
 
   handleInputChange = ({ currentTarget: input }) => {
@@ -64,6 +59,19 @@ class LoginForm extends Component {
     account[input.name] = input.value
 
     this.setState({ account, errors })
+  }
+
+  buttonStatus = () => {
+    const { errors } = this.state
+
+    if (
+      Object.keys(errors).length === 0 ||
+      errors.password !== "" ||
+      errors.username !== ""
+    )
+      return true
+
+    return false
   }
 
   render() {
@@ -88,7 +96,9 @@ class LoginForm extends Component {
             error={errors.password}
             onChange={this.handleInputChange}
           />
-          <button className="btn btn-primary">Login</button>
+          <button className="btn btn-primary" disabled={this.buttonStatus()}>
+            Login
+          </button>
         </form>
       </>
     )

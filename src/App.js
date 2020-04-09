@@ -8,7 +8,8 @@ import MovieForm from "./components/movieForm"
 import Customers from "./components/customers"
 import Rentals from "./components/rentals"
 import NotFound from "./components/notFound"
-import LoginForm from "./components/loginform"
+import LoginForm from "./components/loginForm"
+import RegisterForm from "./components/registerForm"
 
 function App(props) {
   return (
@@ -22,6 +23,9 @@ function App(props) {
           /> */}
           <Route path="/login">
             <LoginForm />
+          </Route>
+          <Route path="/register">
+            <RegisterForm />
           </Route>
           <Route path="/movies/:id">
             <MovieForm />
@@ -37,7 +41,6 @@ function App(props) {
           </Route>
           <Route path="/not-found">
             <NotFound />
-            Found
           </Route>
           <Redirect exact from="/" to="/movies" />
           <Redirect to="/not-found" />

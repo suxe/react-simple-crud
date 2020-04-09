@@ -5,6 +5,7 @@ import Pagination from "./pagination"
 import { paginate, orderTable } from "../utils/dataFilters"
 import ListGroup from "./listGroup"
 import MoviesTable from "./moviesTable"
+import { Link } from "react-router-dom"
 
 class Movies extends Component {
   constructor(props) {
@@ -15,7 +16,7 @@ class Movies extends Component {
       movies: [],
       genres: [],
       selectedGenre: null,
-      sortColumn: { path: "title", order: "asc" }
+      sortColumn: { path: "title", order: "asc" },
     }
   }
 
@@ -35,16 +36,16 @@ class Movies extends Component {
     this.setState({ genres })
   }
 
-  handleDelete = id => {
+  handleDelete = (id) => {
     deleteMovie(id)
     this.handleGenreSelect(this.state.selectedGenre)
   }
 
-  textInfo = movies => {
+  textInfo = (movies) => {
     const { selectedGenre } = this.state
 
     if (selectedGenre !== null) {
-      movies = getMovies().filter(m => m.genre._id === selectedGenre)
+      movies = getMovies().filter((m) => m.genre._id === selectedGenre)
     }
 
     return movies.length > 0
@@ -52,7 +53,7 @@ class Movies extends Component {
       : "There are no movies in the database"
   }
 
-  handleLike = movie => {
+  handleLike = (movie) => {
     const movies = [...this.state.movies]
     const index = movies.indexOf(movie)
     movies[index].liked = !movies[index].liked
@@ -60,14 +61,14 @@ class Movies extends Component {
     this.setState({ moveies: movies })
   }
 
-  handlePageChange = page => {
+  handlePageChange = (page) => {
     this.setState({ currentPage: page })
   }
 
-  handleGenreSelect = genreId => {
+  handleGenreSelect = (genreId) => {
     this.setState({
       selectedGenre: genreId,
-      currentPage: 1
+      currentPage: 1,
     })
   }
 
@@ -81,11 +82,11 @@ class Movies extends Component {
       currentPage,
       movies: allMovies,
       selectedGenre,
-      sortColumn
+      sortColumn,
     } = this.state
 
     const filtered = selectedGenre
-      ? allMovies.filter(m => m.genre._id === selectedGenre)
+      ? allMovies.filter((m) => m.genre._id === selectedGenre)
       : allMovies
 
     const orderedMovies = orderTable(
@@ -98,7 +99,7 @@ class Movies extends Component {
 
     return {
       totalCount: filtered.length,
-      data: movies
+      data: movies,
     }
   }
 
@@ -109,7 +110,7 @@ class Movies extends Component {
       movies: allMovies,
       genres: allGenres,
       selectedGenre,
-      sortColumn
+      sortColumn,
     } = this.state
 
     // Filtering, sorting, pagination
@@ -126,6 +127,9 @@ class Movies extends Component {
             />
           </div>
           <div className="col">
+            <Link to="/movies/new" className="btn btn-dark m-1">
+              New Movie
+            </Link>
             <h5 className="m-2">{this.textInfo(allMovies)}</h5>
             {totalCount > 0 && (
               <React.Fragment>

@@ -1,6 +1,7 @@
 import React, { Component } from "react"
-import Joi from "@hapi/joi"
+// import Joi from "@hapi/joi"
 import Input from "./input"
+import Select from "./select"
 
 class Form extends Component {
   state = {
@@ -20,7 +21,9 @@ class Form extends Component {
   }
 
   validateProperty = ({ name, value }) => {
-    const { error } = Joi.string().min(3).required().label(name).validate(value)
+    // const { error } = Joi.string().min(3).required().label(name).validate(value)
+    const { schemaRules } = this.state
+    const { error } = schemaRules[name].validate(value)
 
     if (error) return error.message
 
@@ -52,13 +55,27 @@ class Form extends Component {
 
   renderInput = (name, label, type = "text") => {
     const { data, errors } = this.state
-
     return (
       <Input
         name={name}
         value={data[name]}
         label={label}
         type={type}
+        error={errors ? errors[name] : null}
+        onChange={this.handleInputChange}
+      />
+    )
+  }
+
+  // options = [{id:..., name:...},{...}]
+  renderSelect = (name, label, options) => {
+    const { data, errors } = this.state
+    return (
+      <Select
+        name={name}
+        value={data[name] || options[0]["id"]}
+        label={label}
+        options={options}
         error={errors ? errors[name] : null}
         onChange={this.handleInputChange}
       />

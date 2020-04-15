@@ -17,6 +17,8 @@ class Form extends Component {
     if (error && error.details.length > 0)
       error.details.map((err) => (errors[err.path[0]] = err.message))
 
+    console.log(errors)
+
     return Object.keys(errors).length ? errors : null
   }
 
@@ -58,7 +60,7 @@ class Form extends Component {
     return (
       <Input
         name={name}
-        value={data[name]}
+        value={data[name] || ""}
         label={label}
         type={type}
         error={errors ? errors[name] : null}

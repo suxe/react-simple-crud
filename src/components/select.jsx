@@ -6,6 +6,7 @@ import { PropTypes } from "prop-types"
  * Compare the commented code with the new one, is nicer
  */
 const Select = ({ name, label, options, error, ...rest }) => {
+  console.log("options: ", options)
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
@@ -16,7 +17,7 @@ const Select = ({ name, label, options, error, ...rest }) => {
         className={`form-control ${error ? "is-invalid" : ""}`}
       >
         {options.map((option) => (
-          <option key={option.id} value={option.id}>
+          <option key={option._id} value={option._id}>
             {option.name}
           </option>
         ))}

@@ -1,8 +1,8 @@
 import React from "react"
 import Form from "./form"
 import { withRouter } from "react-router-dom"
-import { getMovie, saveMovie } from "../services/fakeMovieService"
-import { getGenres } from "../services/fakeGenreService"
+import { getMovie, saveMovie } from "../services/movieService"
+import { getGenres } from "../services/genreService"
 import Joi from "@hapi/joi"
 
 class MovieForm extends Form {
@@ -11,7 +11,7 @@ class MovieForm extends Form {
 
     this.state = {
       data: {
-        _id: "",
+        // _id: "",
         title: "",
         genreId: "",
         numberInStock: "",
@@ -19,7 +19,7 @@ class MovieForm extends Form {
       },
       errors: {},
       schemaRules: {
-        _id: Joi.string().min(3),
+        // _id: Joi.string(),
         title: Joi.string().min(3).required().label("Title"),
         genreId: Joi.string().min(3).required().label("Genre"),
         numberInStock: Joi.number()
@@ -29,60 +29,68 @@ class MovieForm extends Form {
           .label("Number in Stock"),
         dailyRentalRate: Joi.number().min(0).max(10).required().label("Rate"),
       },
+      genreNames: [{ _id: 1, name: "random" }],
+      pageTitle: "Create new movie", // movie: {},
     }
 
     this.schema = Joi.object(this.state.schemaRules)
   }
 
-  componentDidMount() {
-    const { id } = this.props.match.params
-    const existentMovie = getMovie(id)
+  async componentDidMount() {
+    await this.getGenreNames()
+    await this.populateMovie()
+  }
 
-    if (existentMovie) {
-      let data = {
-        ...this.state.data,
-        ...existentMovie,
-        genreId: existentMovie.genre._id,
-      }
-      delete data["genre"]
+  populateMovie = async () => {
+    try {
+      const { id } = this.props.match.params
+      if (id === "new") return
 
-      this.setState({ data })
-      // console.log(data)
-    } else if (id === "new") {
-      console.error("No Movie!")
-      // create random _id
-      const randomId = Math.random().toString(36).substring(2, 20) + "badId"
-      const firstGenreId = getGenres()[0]._id
-      this.setState({ data: { _id: randomId, genreId: firstGenreId } })
-    } else {
-      return this.props.history.push("/not-found")
+      const { data: movie } = await getMovie(id)
+      const data = this.mapToViewModel(movie)
+      this.setState({ data, pageTitle: "Update movie" })
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        return this.props.history.replace("/not-found")
     }
   }
 
-  getGenreNames = () => {
-    return getGenres().map((g) => {
+  mapToViewModel = (movie) => {
+    console.log(movie)
+    let data = {
+      ...this.state.data,
+      ...movie,
+      genreId: movie.genre._id,
+    }
+    delete data["genre"]
+    return data
+  }
+
+  getGenreNames = async () => {
+    const { data: genreNames } = await getGenres()
+    genreNames.map((g) => {
       return {
-        id: g._id,
+        _id: g._id,
         name: g.name,
       }
     })
+    this.setState({ genreNames })
   }
 
-  doSubmit = () => {
-    saveMovie(this.state.data)
-    return this.props.history.push("/movies")
+  doSubmit = async () => {
+    await saveMovie(this.state.data)
+    this.props.history.push("/movies")
   }
 
   render() {
-    const { movie } = this.state
-    console.log(movie)
+    const { pageTitle } = this.state
     // const { title, genre, stock, rate } = this.state.data
     return (
       <>
-        <h1>{movie ? "Update movie" : "Create new movie"}</h1>
+        <h1>{pageTitle}</h1>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title")}
-          {this.renderSelect("genreId", "Genre", this.getGenreNames())}
+          {this.renderSelect("genreId", "Genre", this.state.genreNames)}
           {this.renderInput("numberInStock", "Number in Stock")}
           {this.renderInput("dailyRentalRate", "Rate", "number")}
 

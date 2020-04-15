@@ -1,11 +1,13 @@
 import React, { Component } from "react"
-import { getMovies, deleteMovie } from "../services/fakeMovieService"
-import { getGenres } from "../services/fakeGenreService"
+import { getMovies, deleteMovie } from "../services/movieService"
+import { getGenres } from "../services/genreService"
 import Pagination from "./pagination"
 import { paginate, orderTable } from "../utils/dataFilters"
 import ListGroup from "./listGroup"
 import MoviesTable from "./moviesTable"
 import { Link } from "react-router-dom"
+import Search from "./search"
+import { toast } from "react-toastify"
 
 class Movies extends Component {
   constructor(props) {
@@ -17,6 +19,8 @@ class Movies extends Component {
       genres: [],
       selectedGenre: null,
       sortColumn: { path: "title", order: "asc" },
+      searchQuery: "",
+      moviesTextInfo: "",
     }
   }
 
@@ -25,33 +29,47 @@ class Movies extends Component {
     this.getGenres()
   }
 
-  getMovies = () => {
-    const movies = getMovies()
+  getMovies = async () => {
+    const { data: movies } = await getMovies()
     this.setState({ movies })
   }
 
-  getGenres = () => {
+  getGenres = async () => {
     // Add all genres item
-    const genres = [{ _id: null, name: "All Genres" }, ...getGenres()]
+    const { data } = await getGenres()
+    const genres = [{ _id: null, name: "All Genres" }, ...data]
     this.setState({ genres })
   }
 
-  handleDelete = (id) => {
-    deleteMovie(id)
-    this.handleGenreSelect(this.state.selectedGenre)
-  }
+  handleDelete = async (id) => {
+    // optimistic deleting
+    const originalMovies = this.state.movies
+    const movies = originalMovies.filter((m) => m._id !== id)
+    this.setState({ movies, selectedGenre: null, currentPage: 1 })
 
-  textInfo = (movies) => {
-    const { selectedGenre } = this.state
+    try {
+      await deleteMovie(id)
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("this movie has been already deleted")
 
-    if (selectedGenre !== null) {
-      movies = getMovies().filter((m) => m.genre._id === selectedGenre)
+      // If error, undo changes
+      this.setState({ movies: originalMovies })
     }
-
-    return movies.length > 0
-      ? `Showing ${movies.length} movies in the database`
-      : "There are no movies in the database"
   }
+
+  // textInfo = (movies) => {
+  //   const { selectedGenre } = this.state
+
+  //   if (selectedGenre !== null) {
+  //     movies = getMovies().filter((m) => m.genre._id === selectedGenre)
+  //     // movies = this.state.movies.filter((m) => m.genre._id === selectedGenre)
+  //   }
+
+  //   return movies.length > 0
+  //     ? `Showing ${movies.length} movies in the database`
+  //     : "There are no movies in the database"
+  // }
 
   handleLike = (movie) => {
     const movies = [...this.state.movies]
@@ -65,10 +83,13 @@ class Movies extends Component {
     this.setState({ currentPage: page })
   }
 
-  handleGenreSelect = (genreId) => {
+  handleGenreSelect = async (genreId) => {
+    const { data: movies } = await getMovies()
     this.setState({
       selectedGenre: genreId,
       currentPage: 1,
+      movies,
+      searchQuery: "",
     })
   }
 
@@ -76,14 +97,30 @@ class Movies extends Component {
     this.setState({ sortColumn })
   }
 
+  handleSearch = (query) => {
+    this.setState({
+      selectedGenre: null,
+      currentPage: 1,
+      searchQuery: query,
+    })
+  }
+
   getPagedData = () => {
-    const {
+    let {
       pageSize,
       currentPage,
       movies: allMovies,
       selectedGenre,
       sortColumn,
+      searchQuery,
     } = this.state
+
+    if (searchQuery) {
+      // const { data: allMovies } = getMovies()
+      allMovies = allMovies.filter((m) =>
+        m.title.toLowerCase().startsWith(searchQuery)
+      )
+    }
 
     const filtered = selectedGenre
       ? allMovies.filter((m) => m.genre._id === selectedGenre)
@@ -111,6 +148,7 @@ class Movies extends Component {
       genres: allGenres,
       selectedGenre,
       sortColumn,
+      searchQuery,
     } = this.state
 
     // Filtering, sorting, pagination
@@ -130,7 +168,11 @@ class Movies extends Component {
             <Link to="/movies/new" className="btn btn-dark m-1">
               New Movie
             </Link>
-            <h5 className="m-2">{this.textInfo(allMovies)}</h5>
+            {/* <h5 className="m-2">{this.textInfo(allMovies)}</h5>1 */}
+            <h5 className="m-2">{`There are ${allMovies.length} movies in total`}</h5>
+
+            <Search value={searchQuery} onSearch={this.handleSearch} />
+
             {totalCount > 0 && (
               <React.Fragment>
                 <MoviesTable

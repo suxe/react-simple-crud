@@ -56,7 +56,6 @@ class MovieForm extends Form {
   }
 
   mapToViewModel = (movie) => {
-    console.log(movie)
     let data = {
       ...this.state.data,
       ...movie,
@@ -91,7 +90,7 @@ class MovieForm extends Form {
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("title", "Title")}
           {this.renderSelect("genreId", "Genre", this.state.genreNames)}
-          {this.renderInput("numberInStock", "Number in Stock")}
+          {this.renderInput("numberInStock", "Number in Stock", "number")}
           {this.renderInput("dailyRentalRate", "Rate", "number")}
 
           {this.renderButton("Save")}

@@ -10,7 +10,9 @@ class Form extends Component {
   }
 
   validate = () => {
-    let errors = {}
+    // let errors = {}
+    let errors = { ...this.state.errors }
+    console.log("errors - ", errors)
     const options = { abortEarly: false }
     const { error } = this.schema.validate(this.state.data, options)
 
@@ -57,6 +59,7 @@ class Form extends Component {
 
   renderInput = (name, label, type = "text") => {
     const { data, errors } = this.state
+
     return (
       <Input
         name={name}
@@ -85,9 +88,10 @@ class Form extends Component {
   }
 
   renderButton = (label) => {
+    const errors = this.validate()
     return (
-      <button className="btn btn-primary" disabled={this.validate()}>
-        {this.validate() ? "Disabled" : label}
+      <button className="btn btn-primary" disabled={errors}>
+        {errors ? "Disabled" : label}
       </button>
     )
   }

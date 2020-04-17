@@ -4,21 +4,21 @@ import { endpoint } from "../config.json"
 // We don't use async/await here, we will use it when we call to this function. Otherwise we will being duplicating unnnecessary promises
 
 export const getMovies = () => {
-  return http.get(endpoint + "movies")
+  return http.get(endpoint + "/movies")
 }
 
 export const getMovie = (id) => {
-  return http.get(endpoint + "movies/" + id)
+  return http.get(endpoint + "/movies/" + id)
 }
 
 export const saveMovie = (movie) => {
   if (movie._id) {
     const body = { ...movie }
     delete body._id
-    return http.put(endpoint + "movies/" + movie._id, body)
+    return http.put(endpoint + "/movies/" + movie._id, body)
   }
 
-  return http.post(endpoint + "movies/", movie)
+  return http.post(endpoint + "/movies/", movie)
 }
 // export function saveMovie(movie) {
 //   let movieInDb = movies.find((m) => m._id === movie._id) || {}
@@ -36,5 +36,5 @@ export const saveMovie = (movie) => {
 // }
 
 export const deleteMovie = (id) => {
-  return http.delete(endpoint + "movies/" + id)
+  return http.delete(endpoint + "/movies/" + id)
 }

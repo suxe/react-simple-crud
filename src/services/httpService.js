@@ -1,5 +1,8 @@
 import axios from "axios"
 import { toast } from "react-toastify"
+import auth from "./authService"
+
+axios.defaults.headers.common["x-auth-token"] = auth.getJwt()
 
 // Axios Interceptor.
 axios.interceptors.response.use(

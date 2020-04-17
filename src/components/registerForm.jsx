@@ -1,7 +1,9 @@
 import React from "react"
 import Form from "./form"
+import { withRouter } from "react-router-dom"
 import Joi from "@hapi/joi"
 import * as userService from "../services/userService"
+import auth from "../services/authService"
 
 class RegisterForm extends Form {
   state = {
@@ -26,7 +28,9 @@ class RegisterForm extends Form {
 
   doSubmit = async () => {
     try {
-      await userService.register(this.state.data)
+      const { headers } = await userService.register(this.state.data)
+      auth.loginWithJwt(headers["x-auth-token"])
+      window.location = "/"
     } catch (ex) {
       if (ex.response && ex.response.status === 400) {
         const errors = { ...this.state.errors }
@@ -52,4 +56,4 @@ class RegisterForm extends Form {
   }
 }
 
-export default RegisterForm
+export default withRouter(RegisterForm)

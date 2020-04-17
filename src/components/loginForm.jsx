@@ -1,27 +1,40 @@
 import React from "react"
 import Joi from "@hapi/joi"
+import { withRouter } from "react-router-dom"
 import Form from "./form"
-import { login } from "../services/authService"
+import auth from "../services/authService"
 
 class LoginForm extends Form {
-  state = {
-    data: { email: "", password: "" },
-    errors: {},
-    schemaRules: {
-      email: Joi.string()
-        .trim()
-        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-        .required()
-        .label("Email"),
-      password: Joi.string().min(5).required().label("Password"),
-    },
-  }
+  constructor(props) {
+    super(props)
+    this.state = {
+      data: { email: "", password: "" },
+      errors: {},
+      schemaRules: {
+        email: Joi.string()
+          .trim()
+          .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+          .required()
+          .label("Email"),
+        password: Joi.string().min(5).required().label("Password"),
+      },
+    }
 
-  schema = Joi.object(this.state.schemaRules)
+    this.schema = Joi.object(this.state.schemaRules)
+  }
 
   doSubmit = async () => {
     const { data } = this.state
-    await login(data.email, data.password)
+    try {
+      await auth.login(data.email, data.password)
+      window.location = "/"
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        const errors = { ...this.state.errors }
+        errors.email = error.response.data
+        this.setState({ errors })
+      }
+    }
   }
 
   render() {
@@ -39,4 +52,4 @@ class LoginForm extends Form {
   }
 }
 
-export default LoginForm
+export default withRouter(LoginForm)

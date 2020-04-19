@@ -3,6 +3,7 @@ import Table from "./table"
 import Like from "./like"
 import PropTypes from "prop-types"
 import { Link } from "react-router-dom"
+import auth from "../services/authService"
 
 class MoviesTable extends Component {
   columns = [
@@ -25,19 +26,26 @@ class MoviesTable extends Component {
         />
       ),
     },
-    {
-      key: "delete",
-      content: (movie) => (
-        <button
-          className="btn btn-danger btn-sm"
-          style={{ cursor: "pointer" }}
-          onClick={(_e) => this.props.onDelete(movie._id)}
-        >
-          Delete
-        </button>
-      ),
-    },
   ]
+
+  deleteColumn = {
+    key: "delete",
+    content: (movie) => (
+      <button
+        className="btn btn-danger btn-sm"
+        style={{ cursor: "pointer" }}
+        onClick={(_e) => this.props.onDelete(movie._id)}
+      >
+        Delete
+      </button>
+    ),
+  }
+
+  constructor() {
+    super()
+    const user = auth.getCurrentUser()
+    if (user && user.isAdmin) this.columns.push(this.deleteColumn)
+  }
 
   raiseSort = (path) => {
     const { sortBy } = this.props

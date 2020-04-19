@@ -1,6 +1,6 @@
 import React from "react"
 import Joi from "@hapi/joi"
-import { withRouter } from "react-router-dom"
+import { withRouter, Redirect } from "react-router-dom"
 import Form from "./form"
 import auth from "../services/authService"
 
@@ -27,7 +27,8 @@ class LoginForm extends Form {
     const { data } = this.state
     try {
       await auth.login(data.email, data.password)
-      window.location = "/"
+      const { state } = this.props.location
+      window.location = state ? state.from.pathname : "/"
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const errors = { ...this.state.errors }
@@ -38,6 +39,9 @@ class LoginForm extends Form {
   }
 
   render() {
+    // if user is logged, redirect to home
+    if (auth.getCurrentUser()) return <Redirect to="/" />
+
     return (
       <>
         <h1>Login</h1>

@@ -153,6 +153,7 @@ class Movies extends Component {
 
     // Filtering, sorting, pagination
     const { totalCount, data: movies } = this.getPagedData()
+    const { user } = this.props
 
     return (
       <React.Fragment>
@@ -165,9 +166,11 @@ class Movies extends Component {
             />
           </div>
           <div className="col">
-            <Link to="/movies/new" className="btn btn-dark m-1">
-              New Movie
-            </Link>
+            {user && user.isAdmin && (
+              <Link to="/movies/new" className="btn btn-dark m-1">
+                New Movie
+              </Link>
+            )}
             {/* <h5 className="m-2">{this.textInfo(allMovies)}</h5>1 */}
             <h5 className="m-2">{`There are ${allMovies.length} movies in total`}</h5>
 
@@ -176,6 +179,7 @@ class Movies extends Component {
             {totalCount > 0 && (
               <React.Fragment>
                 <MoviesTable
+                  // user={user}
                   movies={movies}
                   onLike={this.handleLike}
                   onDelete={this.handleDelete}

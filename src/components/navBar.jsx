@@ -10,7 +10,7 @@ const NavBar = ({ user }) => {
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav">
+        <ul className="navbar-nav mr-auto">
           <li className="nav-item">
             <NavLink to="/movies" className="nav-link">
               Movies
@@ -26,6 +26,9 @@ const NavBar = ({ user }) => {
               Rentals
             </NavLink>
           </li>
+        </ul>
+
+        <ul className="navbar-nav">
           {!user && (
             <React.Fragment>
               <li className="nav-item">
